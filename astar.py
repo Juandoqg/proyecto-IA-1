@@ -62,7 +62,7 @@ def solve_puzzle(puzzle, frames, unlock_node):
         "log_astar": f"A* iniciado | start='{start}'  goal='{goal}'",
 
         # Estados visuales de nodos
-        "puzzle_node_states": _puzzle_states(visited, None, goal, start),
+        "puzzle_node_states": _puzzle_states(graph, visited, None, goal, start),
 
         # Información de A*
         "puzzle_gcost": dict(g_cost),
@@ -95,7 +95,7 @@ def solve_puzzle(puzzle, frames, unlock_node):
 
             "log_astar": f"Expande '{current}'  f={f}  g={g_cost[current]}  h={heuristic(current)}",
 
-            "puzzle_node_states": _puzzle_states(visited, current, goal, start),
+            "puzzle_node_states": _puzzle_states(graph, visited, current, goal, start),
             "puzzle_gcost": dict(g_cost),
             "puzzle_nodes_expanded": nodes_expanded,
             "puzzle_cost": "—",
@@ -126,7 +126,7 @@ def solve_puzzle(puzzle, frames, unlock_node):
                 "log_bfs":   f"Puzzle resuelto. Desbloqueando '{unlock_node}'",
                 "log_astar": f"Resuelto  costo={g_cost[current]}  camino={' → '.join(path)}",
 
-                "puzzle_node_states": _puzzle_states(visited, current, goal, start),
+                "puzzle_node_states": _puzzle_states(graph, visited, current, goal, start),
                 "puzzle_gcost": dict(g_cost),
                 "puzzle_nodes_expanded": nodes_expanded,
                 "puzzle_cost": g_cost[current],
@@ -168,7 +168,7 @@ def solve_puzzle(puzzle, frames, unlock_node):
 
                     "log_astar": f"  {current}→{neighbor}  g={new_cost}  f={f_val}",
 
-                    "puzzle_node_states": _puzzle_states(visited, current, goal, start),
+                    "puzzle_node_states": _puzzle_states(graph, visited, current, goal, start),
                     "puzzle_gcost": dict(g_cost),
                     "puzzle_nodes_expanded": nodes_expanded,
                     "puzzle_cost": "—",
@@ -185,25 +185,19 @@ def solve_puzzle(puzzle, frames, unlock_node):
     }
 
 
-def _puzzle_states(visited, current, goal, start):
+def _puzzle_states(graph, visited, current, goal, start):
     """
-    Genera el estado visual de cada nodo del puzzle.
-
-     Estados posibles:
-    - start      → nodo inicial
-    - expanding  → nodo actual (en expansión)
-    - expanded   → nodo ya visitado
-    - goal       → nodo objetivo alcanzado
-    - available  → nodo aún no explorado
-
-     Se usa para pintar el grafo en el frontend.
+    Construye los estados visuales del puzzle de forma dinámica
+    a partir del grafo del subproblema.
     """
 
     states = {}
 
-    #  NOTA: actualmente está HARDCODEADO para nodos A-E
-    # (esto se puede mejorar para hacerlo dinámico)
-    for n in ["A", "B", "C", "D", "E"]:
+    # Obtener todos los nodos del grafo dinámicamente
+    nodes = nodes = _extract_nodes(graph)
+
+    # Asignar estados
+    for n in nodes:
         if n == goal and n in visited:
             states[n] = "goal"
         elif n in visited:
@@ -216,3 +210,13 @@ def _puzzle_states(visited, current, goal, start):
             states[n] = "available"
 
     return states
+
+
+
+def _extract_nodes(graph):
+    nodes = set()
+    for n, neighbors in graph.items():
+        nodes.add(n)
+        for nb, _ in neighbors:
+            nodes.add(nb)
+    return nodes
