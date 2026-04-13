@@ -199,7 +199,8 @@ venv\Scripts\activate
 pip install -r requirements.txt
 4. Ejecutar el servidor:
 python app.py
-
+5. Entrar al servidor que esta corriendo en el 5000 en el navegador
+http://localhost:5000
 
 ---
 
@@ -216,3 +217,7 @@ python app.py
 ## Autor
 
 Proyecto académico de inteligencia artificial enfocado en la integración de algoritmos de búsqueda.
+Hecho por:
+- Mariana Viera
+- Juan Jose Ospina
+- Juan David Quintero
