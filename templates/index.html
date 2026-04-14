@@ -6,17 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escape Room Solver</title>
   <link
-    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
 
   <header>
     <div class="header-left">
-      <div class="logo">&#x1F512;</div>
+      <div class="logo"><i data-lucide="unlock" style="width: 20px; height: 20px;"></i></div>
       <div>
         <h1>Escape Room Solver</h1>
         <div class="subtitle">Flask + BFS global &nbsp;·&nbsp; A* informado</div>
@@ -32,10 +32,10 @@
     <div class="left">
 
       <div class="controls">
-        <button class="primary" id="btn-step" onclick="stepForward()" disabled>Paso ›</button>
-        <button id="btn-auto" onclick="toggleAuto()" disabled>&#x25B6; Auto</button>
-        <button id="btn-back" onclick="stepBack()" disabled>‹ Atrás</button>
-        <button onclick="resetView()" disabled id="btn-reset">&#x21BA; Reiniciar</button>
+        <button class="primary" id="btn-step" onclick="stepForward()" disabled>Paso <i data-lucide="chevron-right"></i></button>
+        <button id="btn-auto" onclick="toggleAuto()" disabled><i data-lucide="play"></i> Auto</button>
+        <button id="btn-back" onclick="stepBack()" disabled><i data-lucide="chevron-left"></i> Atrás</button>
+        <button onclick="resetView()" disabled id="btn-reset"><i data-lucide="rotate-ccw"></i> Reiniciar</button>
         <span id="frame-counter" class="frame-counter">—</span>
         <span id="loading"><span class="spinner"></span>Cargando desde Flask...</span>
       </div>
@@ -45,8 +45,8 @@
           <span class="pt">Grafo global — BFS</span>
           <span id="bfs-status" style="font-size:11px;color:var(--text3);font-family:var(--mono)">esperando...</span>
         </div>
-        <div class="pb" style="padding:6px">
-          <svg id="global-graph" viewBox="0 0 700 300"></svg>
+        <div class="pb" style="padding:16px; display:flex; justify-content:center;">
+          <svg id="global-graph" viewBox="0 0 800 500"></svg>
         </div>
         <div class="legend">
           <span class="leg"><span class="leg-dot" style="background:#4ade80"></span>Inicial</span>
@@ -92,8 +92,8 @@
                 <div class="sk">Puzzles resueltos</div>
               </div>
               <div class="sc">
-                <div class="sv" id="s-queue">0</div>
-                <div class="sk">En cola</div>
+                <div class="sv" id="s-created">0</div>
+                <div class="sk">Nodos creados</div>
               </div>
             </div>
           </div>
@@ -103,16 +103,16 @@
           <div class="pb">
             <div class="sg">
               <div class="sc">
+                <div class="sv" id="p-created">0</div>
+                <div class="sk">Nodos creados</div>
+              </div>
+              <div class="sc">
                 <div class="sv" id="p-exp">0</div>
                 <div class="sk">Nodos expandidos</div>
               </div>
               <div class="sc">
                 <div class="sv" id="p-cost">—</div>
-                <div class="sk">Costo total</div>
-              </div>
-              <div class="sc" style="grid-column:span 2">
-                <div class="sv" id="p-path" style="font-size:12px">—</div>
-                <div class="sk">Camino puzzle</div>
+                <div class="sk">Costo solución</div>
               </div>
             </div>
           </div>
@@ -138,6 +138,9 @@
   </div>
 
 <script src="{{ url_for('static', filename='app.js') }}"></script>
+<script>
+  lucide.createIcons();
+</script>
 </body>
 
 </html>

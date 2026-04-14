@@ -5,31 +5,17 @@ from graph import Node, Graph
 from bfs import bfs_with_puzzles
 from puzzle import create_puzzle
 
-
+# creamos la app web
 app = Flask(__name__, static_folder="static")
-
 CORS(app)
 
-
 def build_graph():
-    """
-    Construye el grafo principal del escape room.
-
-    Cada nodo representa un estado del juego.
-    Algunos nodos están bloqueados y contienen un puzzle (A*).
-
-    Retorna:
-    - grafo (Graph)
-    - lista de nodos iniciales (starts)
-    """
-
-    # -------------------------
-    # Creación de nodos
-    # -------------------------
+    # esta funcion arma el mapa del juego
+    
     A = Node("A")
     B = Node("B")
 
-    # Nodo bloqueado con subproblema A*
+    # esta habitacion tiene candado, hay que resolver el puzzle
     C = Node("C", locked=True, puzzle=create_puzzle())
 
     E = Node("E")
@@ -38,20 +24,19 @@ def build_graph():
     I = Node("I")
     J = Node("J")
 
-    # Otro nodo bloqueado
+    # otra habitacion con puzzle
     K = Node("K", locked=True, puzzle=create_puzzle())
 
     L = Node("L")
-    M = Node("M")  # Nodo objetivo (meta)
+    M = Node("M")  # la meta
 
-    # -------------------------
-    # Construcción del grafo
-    # -------------------------
+    # creamos el grafo que conecta todo
     g = Graph()
 
-    # Definición de transiciones (grafo dirigido)
+    # unimos las habitaciones
     g.add_edge(A, B)
     g.add_edge(A, E)
+    g.add_edge(A, H)
     g.add_edge(B, C)
     g.add_edge(E, G)
     g.add_edge(E, C)
@@ -66,63 +51,31 @@ def build_graph():
     g.add_edge(K, M)
     g.add_edge(L, M)
 
-    # BFS comienza desde dos nodos iniciales
-    return g, [A, H]
+    # devolvemos el mapa y desde donde empezamos 
+    return g, [A]
 
-
-# -------------------------
-# Ruta principal (frontend)
-# -------------------------
+# nos lleva a la pagina principal
 @app.route("/")
 def index():
-    """
-    Renderiza la interfaz gráfica (HTML).
-    """
     return render_template("index.html")
 
-
-# -------------------------
-# Endpoint principal del sistema
-# -------------------------
+# funcion principal para resolver
 @app.route("/solve", methods=["GET"])
 def solve():
-    """
-    Ejecuta el algoritmo completo del escape room:
-
-    1. Construye el grafo
-    2. Ejecuta BFS
-    3. Resuelve puzzles con A* cuando es necesario
-    4. Genera frames para animación
-    5. Retorna resultados al frontend
-
-    Retorna:
-    - frames: lista de estados paso a paso
-    - metrics: métricas globales
-    """
-
-    # Construcción del problema
+    # armamos el mapa
     g, starts = build_graph()
 
-    # Ejecución del algoritmo híbrido BFS + A*
+    # le decimos que lo resuelva
     frames, metrics = bfs_with_puzzles(g, starts, "M", create_puzzle)
 
-    # Respuesta en formato JSON
+    # mandamos los datos a la pagina para verlos
     return jsonify({
         "frames":  frames,
         "metrics": metrics,
     })
 
-
-# -------------------------
-# Ejecución del servidor
-# -------------------------
+# prendemos el servidor
 if __name__ == "__main__":
     os.makedirs("static", exist_ok=True)
-
-    print("=" * 50)
-    print("  Escape Room Solver — Flask")
-    print("  http://localhost:5000")
-    print("=" * 50)
-
-    # Ejecuta servidor en modo debug
+    print("Iniciando Escape Room en http://localhost:5000")
     app.run(debug=True, port=5000)

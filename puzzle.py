@@ -1,22 +1,7 @@
 def create_puzzle():
-    """
-    Crea un subproblema (puzzle) que será resuelto con A*.
-
-    Este puzzle representa un grafo independiente del grafo global.
-    Se usa cuando el BFS encuentra un nodo bloqueado.
-
-    Retorna un diccionario con:
-    - start: nodo inicial
-    - goal: nodo objetivo
-    - graph: grafo del subproblema (adyacencias con costos)
-    - heuristic: función heurística h(n)
-    """
-
-    # -------------------------
-    # Definición del grafo
-    # -------------------------
-    # Representado como:
-    # nodo -> lista de (vecino, costo)
+    # esto crea el minijuego que hay dentro de una habitacion bloqueada
+    
+    # asi se ve el mapa del puzzle
     graph = {
         "A": [("B", 7)],
         "B": [("C", 3)],
@@ -24,31 +9,12 @@ def create_puzzle():
         "D": [("E", 2)]
     }
 
-    # -------------------------
-    # Función heurística
-    # -------------------------
     def heuristic(n):
-        """
-        Heurística h(n): estima el costo desde el nodo n hasta el objetivo.
-
-        Valores definidos manualmente.
-        Debe ser:
-        - admisible (no sobreestimar)
-        - consistente (idealmente)
-
-        En este caso:
-        A: 10
-        B: 8
-        C: 5
-        D: 2
-        E: 0 (objetivo)
-        """
+        # valores inventados que nos ayudan a saber si estamos cerca del final
         h = {"A": 10, "B": 8, "C": 5, "D": 2, "E": 0}
         return h[n]
 
-    # -------------------------
-    # Retorno del puzzle
-    # -------------------------
+    # devolvemos todo lo necesario para poder jugar
     return {
         "start": "A",
         "goal": "E",
