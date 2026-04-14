@@ -41,6 +41,9 @@ def solve_puzzle(puzzle, frames, unlock_node):
     # g(n): costo acumulado desde el inicio
     g_cost    = {start: 0}
 
+    h_cost = {start: heuristic(start)}
+    f_cost = {start: heuristic(start)}
+
     # Para reconstruir el camino final
     came_from = {start: None}
 
@@ -66,6 +69,8 @@ def solve_puzzle(puzzle, frames, unlock_node):
 
         # Información de A*
         "puzzle_gcost": dict(g_cost),
+        "puzzle_hcost": dict(h_cost),
+        "puzzle_fcost": dict(f_cost),
         "puzzle_nodes_expanded": 0,
         "puzzle_cost": "—",
         "puzzle_path": "—",
@@ -97,6 +102,8 @@ def solve_puzzle(puzzle, frames, unlock_node):
 
             "puzzle_node_states": _puzzle_states(graph, visited, current, goal, start),
             "puzzle_gcost": dict(g_cost),
+            "puzzle_hcost": dict(h_cost),
+            "puzzle_fcost": dict(f_cost),
             "puzzle_nodes_expanded": nodes_expanded,
             "puzzle_cost": "—",
             "puzzle_path": "—",
@@ -128,6 +135,8 @@ def solve_puzzle(puzzle, frames, unlock_node):
 
                 "puzzle_node_states": _puzzle_states(graph, visited, current, goal, start),
                 "puzzle_gcost": dict(g_cost),
+                "puzzle_hcost": dict(h_cost),
+                "puzzle_fcost": dict(f_cost),
                 "puzzle_nodes_expanded": nodes_expanded,
                 "puzzle_cost": g_cost[current],
                 "puzzle_path": " → ".join(path),
@@ -150,6 +159,8 @@ def solve_puzzle(puzzle, frames, unlock_node):
             # Relajación (condición típica de A*)
             if neighbor not in g_cost or new_cost < g_cost[neighbor]:
                 g_cost[neighbor]    = new_cost
+                h_cost[neighbor] = heuristic(neighbor)
+                f_cost[neighbor] = new_cost + h_cost[neighbor]
                 came_from[neighbor] = current
 
                 # f(n) = g(n) + h(n)
@@ -170,6 +181,8 @@ def solve_puzzle(puzzle, frames, unlock_node):
 
                     "puzzle_node_states": _puzzle_states(graph, visited, current, goal, start),
                     "puzzle_gcost": dict(g_cost),
+                    "puzzle_hcost": dict(h_cost),
+                    "puzzle_fcost": dict(f_cost),
                     "puzzle_nodes_expanded": nodes_expanded,
                     "puzzle_cost": "—",
                     "puzzle_path": "—",

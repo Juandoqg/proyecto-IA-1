@@ -54,12 +54,16 @@ def bfs_with_puzzles(graph, starts, goal, puzzle_factory):
     for s in starts:
         queue.append((s, [s.name], 0))
 
+    queue_nodes = [n[0].name for n in queue]
+
+
     # Frame inicial
     frames.append({
         "type": "bfs_init",
         "log_bfs": "BFS iniciado. Nodos raíz: " + ", ".join(s.name for s in starts),
         "global_node_states": dict(global_ns),
         "queue_size": len(queue),
+        "queue_nodes": queue_nodes,
 
         # Información del puzzle vacía (no se ha iniciado A*)
         **_empty_puzzle_frame(),
@@ -88,6 +92,9 @@ def bfs_with_puzzles(graph, starts, goal, puzzle_factory):
         if current_node.name not in [s.name for s in starts]:
             global_ns[current_node.name] = "expanded"
 
+        
+        queue_nodes = [n[0].name for n in queue]
+
         # Frame de expansión
         frames.append({
             "type": "bfs_expand",
@@ -97,6 +104,7 @@ def bfs_with_puzzles(graph, starts, goal, puzzle_factory):
             "log_bfs": f"Expandiendo '{current_node.name}'  prof={depth}  camino={' → '.join(path)}",
             "global_node_states": dict(global_ns),
             "queue_size": len(queue),
+            "queue_nodes": queue_nodes,
             **_empty_puzzle_frame(),
             **_metrics_snapshot(metrics),
         })
@@ -188,12 +196,17 @@ def bfs_with_puzzles(graph, starts, goal, puzzle_factory):
             # Encola el vecino (ya desbloqueado o nunca bloqueado)
             queue.append((neighbor, path + [neighbor.name], depth + 1))
 
+            queue_nodes = [n[0].name for n in queue]
+
             frames.append({
                 "type": "bfs_enqueue",
                 "node": neighbor.name,
                 "log_bfs": f"  → encolado '{neighbor.name}'",
                 "global_node_states": dict(global_ns),
                 "queue_size": len(queue),
+                "queue_nodes": queue_nodes,
+
+
                 **_empty_puzzle_frame(),
                 **_metrics_snapshot(metrics),
             })
@@ -265,6 +278,8 @@ def _empty_puzzle_frame():
     return {
         "puzzle_node_states":    {},
         "puzzle_gcost":          {},
+        "puzzle_hcost":          {},
+        "puzzle_fcost":          {},
         "puzzle_nodes_expanded": 0,
         "puzzle_cost":           "—",
         "puzzle_path":           "—",

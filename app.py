@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 import os
+import time
 from graph import Node, Graph
 from bfs import bfs_with_puzzles
 from puzzle import create_puzzle
@@ -99,12 +100,20 @@ def solve():
     - frames: lista de estados paso a paso
     - metrics: métricas globales
     """
-
+    # iniciar medición de tiempo
+    start_time = time.time()
+    
     # Construcción del problema
     g, starts = build_graph()
 
     # Ejecución del algoritmo híbrido BFS + A*
     frames, metrics = bfs_with_puzzles(g, starts, "M", create_puzzle)
+
+    # calcular tiempo total
+    execution_time = time.time() - start_time
+
+    # agregar 
+    metrics["execution_time"] = round(execution_time, 4)
 
     # Respuesta en formato JSON
     return jsonify({

@@ -46,6 +46,8 @@
       .then(data => {
         ALL_FRAMES = data.frames;
         FINAL_METRICS = data.metrics;    // métricas finales calculadas por Python
+
+        document.getElementById("s-time").textContent = data.metrics.execution_time ?? 0;
         document.getElementById("loading").style.display = "none";
         ["btn-step", "btn-auto", "btn-reset", "btn-back"].forEach(id =>
           document.getElementById(id).disabled = false
@@ -118,11 +120,29 @@
       document.getElementById("s-depth").textContent = f.bfs_max_depth ?? 0;
       document.getElementById("s-puzzles").textContent = f.bfs_puzzles_solved ?? 0;
       document.getElementById("s-queue").textContent = f.queue_size ?? 0;
+      document.getElementById("queue-list").textContent = (f.queue_nodes && f.queue_nodes.length)
+        ? f.queue_nodes.join(" → ")
+        : "—";
 
       // 5. Estadísticas puzzle
       document.getElementById("p-exp").textContent = f.puzzle_nodes_expanded ?? 0;
       document.getElementById("p-cost").textContent = f.puzzle_cost ?? "—";
       document.getElementById("p-path").textContent = f.puzzle_path ?? "—";
+      // g(n), h(n), f(n) del nodo actual del puzzle
+      if (f.current) {
+        document.getElementById("p-g").textContent =
+          f.puzzle_gcost?.[f.current] ?? "—";
+
+        document.getElementById("p-h").textContent =
+          f.puzzle_hcost?.[f.current] ?? "—";
+
+        document.getElementById("p-f").textContent =
+          f.puzzle_fcost?.[f.current] ?? "—";
+      } else {
+        document.getElementById("p-g").textContent = "—";
+        document.getElementById("p-h").textContent = "—";
+        document.getElementById("p-f").textContent = "—";
+        }
 
       // 6. Camino solución
       if (f.type === "bfs_goal") {
