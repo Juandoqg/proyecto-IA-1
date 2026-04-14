@@ -1,73 +1,27 @@
 class Node:
-    """
-    Representa un nodo dentro del grafo del escape room.
-
-    Un nodo modela un estado del juego. Puede estar:
-    - libre (available)
-    - bloqueado (locked)
-    - asociado a un puzzle (subproblema A*)
-
-    Atributos:
-    - name: identificador único del nodo
-    - locked: indica si el nodo está bloqueado
-    - puzzle: estructura del subproblema asociado (si aplica)
-    """
-
+    # esto representa una sola habitacion en el Escape Room
     def __init__(self, name, locked=False, puzzle=None):
-        self.name = name          # Nombre único del nodo
-        self.locked = locked      # Estado: bloqueado o no
-        self.puzzle = puzzle      # Subproblema (para A*)
+        self.name = name          # nombre de la sala
+        self.locked = locked      # si esta bloqueada o no
+        self.puzzle = puzzle      # el puzzle que tiene adentro por si esta bloqueada
 
     def __repr__(self):
-        """
-        Representación en texto del nodo.
-        Útil para debugging.
-        """
+        # para verlo facil al imprimir
         return f"Node({self.name}, locked={self.locked})"
 
-
 class Graph:
-    """
-    Representa el grafo dirigido del escape room.
-
-    Se implementa como una lista de adyacencia:
-    {
-        "A": [Node(B), Node(E)],
-        "B": [Node(C)],
-        ...
-    }
-
-    Nota: el grafo almacena referencias a objetos Node,
-    pero indexa por nombre (string).
-    """
-
+    # este es el mapa que guarda todas las conexiones
     def __init__(self):
-        # Diccionario de adyacencia
-        # clave: nombre del nodo origen
-        # valor: lista de nodos destino
+        # aca guardamos que habitacion conecta con cual
         self.adj = {}
 
     def add_edge(self, u, v):
-        """
-        Agrega una arista dirigida u → v.
-
-        Parámetros:
-        - u: nodo origen (Node)
-        - v: nodo destino (Node)
-        """
+        # agregamos un camino desde la habitacion u a la v
         if u.name not in self.adj:
             self.adj[u.name] = []
-
+        
         self.adj[u.name].append(v)
 
     def neighbors(self, node):
-        """
-        Retorna los vecinos (nodos alcanzables) desde un nodo dado.
-
-        Parámetros:
-        - node: instancia de Node
-
-        Retorna:
-        - lista de nodos vecinos
-        """
+        # devuelve las habitaciones a las que podemos ir desde esta
         return self.adj.get(node.name, [])
